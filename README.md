@@ -1,10 +1,18 @@
 # weather
 
-A new Flutter project.
+Simple weather app using [OpenWeatherMap](https://openweathermap.org/api).
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Create a `.env` file and insert your API key in `KEY=VALUE` format.
+
+E.g. in terminal:
+
+```sh
+$ echo OPENWEATHERMAP_API_KEY=theCakeIsALie42 > .env
+```
+
+## Flutter Getting Started
 
 A few resources to get you started if this is your first Flutter project:
 
