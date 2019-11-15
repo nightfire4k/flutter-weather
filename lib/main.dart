@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'env.dart';
 import 'open_weather_map.dart';
 
@@ -30,11 +31,18 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   _WeatherPageState({this.title});
-  String title;
   bool _isLoading = false;
+  Geolocator _geolocator = Geolocator();
+  String title;
   Weather weather;
 
-  fetchWeather() async {
+  locate() async {
+    final location = await _geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.lowest);
+    fetchWeather(atPosition: location);
+  }
+
+  fetchWeather({Position atPosition}) async {
     if (!mounted) throw Exception("Widget not ready");
 
     setState(() {
@@ -42,9 +50,13 @@ class _WeatherPageState extends State<WeatherPage> {
     });
 
     try {
+      final location =
+          atPosition ?? Position(latitude: 25.761681, longitude: -80.191788);
       final openWeather = OpenWeatherMap(apiKey: Env.openWeatherMapApiKey);
       weather = await openWeather.fetchWeatherByLocation(
-          latitude: 25.761681, longitude: -80.191788, units: "metric");
+          latitude: location.latitude,
+          longitude: location.longitude,
+          units: "metric");
       title = weather.cityName;
     } catch (e) {
       print(e.toString());
@@ -67,6 +79,10 @@ class _WeatherPageState extends State<WeatherPage> {
       appBar: AppBar(
         title: Text(title),
         actions: [
+          IconButton(
+            icon: Icon(Icons.gps_fixed),
+            onPressed: locate,
+          ),
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: _isLoading ? null : fetchWeather,
