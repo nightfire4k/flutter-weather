@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'env.dart';
 import 'open_weather_map.dart';
 import 'package:location/location.dart';
+import 'package:shimmer/shimmer.dart';
 
 void main() async {
   await Env.init();
@@ -97,13 +98,17 @@ class WeatherPageBody extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         weather != null ? Image.network(weather.icon) : Container(),
-        Text(
-          (weather != null ? weather.temperature.toString() : "?") + "°",
-          style: TextStyle(
-            fontSize: 50,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        Shimmer.fromColors(
+            baseColor: Colors.lightBlue,
+            highlightColor: Colors.purpleAccent,
+            child:  Text(
+              (weather != null ? weather.temperature.toString() : "?") + "°",
+              style: TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+        )
       ],
     );
   }
