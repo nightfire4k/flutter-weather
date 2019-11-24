@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'env.dart';
 import 'open_weather_map.dart';
+import 'package:location/location.dart';
 
 void main() async {
   await Env.init();
@@ -33,6 +34,8 @@ class _WeatherPageState extends State<WeatherPage> {
   String title;
   bool _isLoading = false;
   Weather weather;
+  LocationData currentLocation;
+  Location location = new Location();
 
   fetchWeather() async {
     if (!mounted) throw Exception("Widget not ready");
@@ -42,9 +45,11 @@ class _WeatherPageState extends State<WeatherPage> {
     });
 
     try {
+      currentLocation = await location.getLocation();
+      print(currentLocation.longitude);
       final openWeather = OpenWeatherMap(apiKey: Env.openWeatherMapApiKey);
       weather = await openWeather.fetchWeatherByLocation(
-          latitude: 25.761681, longitude: -80.191788, units: "metric");
+          latitude: currentLocation.latitude , longitude: currentLocation.longitude, units: "metric");
       title = weather.cityName;
     } catch (e) {
       print(e.toString());
@@ -103,3 +108,5 @@ class WeatherPageBody extends StatelessWidget {
     );
   }
 }
+
+
